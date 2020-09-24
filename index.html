@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>R aplicado a la ECH</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="  Creative Commons Attribution 4.0 International License" />
+    <link href="index_files/font-awesome-5.3.1/css/fontawesome-all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R aplicado a la ECH
+## Setiembre 2020 <br> Gabriela Mathieu
+### <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
+
+---
+
+
+
+
+
+
+
+
+# ¿Qué haremos hoy?
+
+- Repaso
+&lt;br&gt;&lt;br&gt;
+--
+
+- Subempleo y empleo con restricciones: estimaciones
+&lt;br&gt;&lt;br&gt;
+--
+
+- Funciones educativas
+&lt;br&gt;&lt;br&gt;
+--
+
+- Educación: cálculo de variables y estimación de indicadores
+&lt;br&gt;&lt;br&gt;
+--
+
+- Ejercicios
+
+
+---
+class: inverse, center, middle
+# ech
+
+---
+# Funciones de estimación
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;get_estimation_mean()&lt;/span&gt; : permite estimar la &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;media&lt;/span&gt; de una variable numérica o la &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;proporción&lt;/span&gt; de una variable categórica. 
+&lt;br&gt;
+--	
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;get_estimation_median()&lt;/span&gt;: permite estimar la &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;mediana&lt;/span&gt; de una variable numérica.
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;get_estimation_total()&lt;/span&gt;: permite estimar el &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;total&lt;/span&gt; de una variable numérica.
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;set_design()&lt;/span&gt;: define el &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;diseño de muestra&lt;/span&gt;. Se usa al interior de estas funciones get_estimation_*().
+
+---
+class: inverse, center, middle
+# ech::get_estimation_mean()
+
+---
+# Empleo con restricciones
+
+Estimo la proporción de personas empleadas que están subempleadas y/o no aportan a la seguridad social. Ver [código]()
+
+
+```r
+library(ech); library(dplyr) # cargo paquetes
+load("data/ech19.RData") # cargo los datos
+*ech19 &lt;- underemployment(ech19)  # calculo la variable desempleo
+*ech19 &lt;- employment_restrictions(ech19) # calculo la variable empleo con restricciones
+
+# estimo la proporcion de personas empleadas con restricciones
+*get_estimation_mean(ech19, variable = "employment_restrictions", level = "i", ids = "upm", estrato = "estrato")
+```
+
+```
+# A tibble: 4 x 4
+  employment_restrictions               estimacion estimacion_low estimacion_upp
+  &lt;fct&gt;                                      &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;
+1 "Sin restricciones"                       0.723          0.718          0.728 
+2 "Restriccion por no aporte"               0.181          0.177          0.185 
+3 "Restriccion por subempleo"               0.0285         0.0269         0.0301
+4 "Restriccion por subempleo y no apor…     0.0673         0.0646         0.0699
+```
+
+Chequeo resultados con datos del [OS-MIDES](http://observatoriosocial.mides.gub.uy/New_Pivot/cubos/Distribucion_porcentual_de_las_personas_ocupadas_segun_restricciones_al_empleo_Total_pais_i10314.php)
+
+---
+# Funciones educativas
+
+El paquete ech trae cuatro funciones para calcular variables educativas:
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;enrolled_school()&lt;/span&gt;:  permite calcular la &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;asistencia&lt;/span&gt; a un centro de educación formal.
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;level_completion()&lt;/span&gt;: permite calcular la &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;completitud&lt;/span&gt; según niveles de educación. Crea un grupo de variables dicotómicas que establecen la completitud de primaria, ciclo basico, bachillerato y nivel terciario.
+
+  - Para el nivel terciario se incluye un parámetro &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;n&lt;/span&gt; para definir los años de educación terciaria que se consideran necesarios para haber completado ese nivel.
+  - Dado que la educación terciaria se compone de diferentes carreras de variada duración no es posible establecer un cantidad de años determinada para considerar que ha completado ese nivel.
+&lt;br&gt;&lt;br&gt;
+--
+
+---
+# Funciones educativas
+
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;level_education()&lt;/span&gt;: permite calcular el &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;máximo nivel educativo&lt;/span&gt; alcanzado.
+
+    - Sin instrucción
+    - Primaria
+    - Secundaria
+    - UTU
+    - Magisterio o profesorado
+    - Universidad o similar
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;years_of_schooling()&lt;/span&gt;: permite calcular el &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;acumulado de años de educación&lt;/span&gt;.
+
+- Las variables educativas se relacionan con la edad de las personas, por lo tanto, conviene realizar las estimaciones considerando diferentes tramos de edad.
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;age_group()&lt;/span&gt;:  permite crear una variable con &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;grupos de edad&lt;/span&gt;.
+
+---
+# Asistencia
+
+Preguntas de la encuesta que relevan asistencia a un centro de estudio
+
+Descripción | Variable | Códigos 
+--------|:--------------:|----------------
+Asiste a un centro educativo | 193 | 1 Asiste; 2 Asistió; 3 Nunca asistió
+Asistencia a educación primaria |	e197	| 1	Asiste; 2	Sí, asistió; 3	No asistió
+Asistencia a educación media | e201	| 1	Asiste; 2	Sí, asistió; 3	No asistió
+Asistencia a educación técnica | e212 | 1	Asiste; 2	Sí, asistió; 3	No asistió
+Asistencia a magisterio o profesorado	| e215 | 1	Asiste; 2	Sí, asistió; 3	No asistió
+Asistencia a universidad o similar | e218 | 1	Asiste; 2	Sí, asistió; 3	No asistió
+Asistencia a terciario no universitario | e221 | 1	Asiste; 2	Sí, asistió; 3	No asistió
+Asistencia a postgrado | e224 |	1	Asiste actualmente; 2	Sí, asistió; 3	No asistió
+
+
+---
+# Asistencia
+
+
+
+```r
+# Asistencia actual a un centro educativo y edad categorizada
+ech19 &lt;- ech19 %&gt;%
+  mutate(asistencia_actual = case_when((e193 == 1 | e197 == 1 | (e201 == 1 &amp; e27 &gt; 10) | e212 == 1 | (e215 == 1 &amp; e27 &gt; 17) |
+                  (e218 == 1 &amp; e27 &gt; 17) | (e221 == 1 &amp; e27 &gt; 17) | (e224 == 1 &amp; e27 &gt; 17)) ~ 1,
+                   TRUE ~ 0),
+          edad_tramos = cut(e27, c(0,4,11,17,29, max(e27)), include.lowest = TRUE,
+                           labels = c("0-4", "5-11", "12-17", "18-25", "30+")))
+
+ech19 %&gt;% group_by(edad_tramos, asistencia_actual) %&gt;% 
+          summarise(total = n())
+```
+
+```
+# A tibble: 10 x 3
+# Groups:   edad_tramos [5]
+   edad_tramos asistencia_actual total
+   &lt;fct&gt;                   &lt;dbl&gt; &lt;int&gt;
+ 1 0-4                         0  3480
+ 2 0-4                         1  2208
+ 3 5-11                        0    65
+ 4 5-11                        1  9302
+ 5 12-17                       0   631
+ 6 12-17                       1  8703
+ 7 18-25                       0 10557
+ 8 18-25                       1  6071
+ 9 30+                         0 65215
+10 30+                         1  1639
+```
+
+---
+class: inverse, center, middle
+# ech::enrolled_school()
+
+---
+# Asistencia
+
+Ahora lo calculamos usando el paquete ech.
+
+
+```r
+*ech19 &lt;- age_groups(ech19)
+*ech19 &lt;- enrolled_school(ech19)
+
+ech19 %&gt;% group_by(age_groups, school_enrollment) %&gt;% 
+          filter(school_enrollment == 1) %&gt;% 
+          summarise(total = n())
+```
+
+```
+# A tibble: 5 x 3
+# Groups:   age_groups [5]
+  age_groups school_enrollment total
+   &lt;int+lbl&gt;         &lt;dbl+lbl&gt; &lt;int&gt;
+1          1            1 [Si]  2208
+2          2            1 [Si]  9302
+3          3            1 [Si]  8703
+4          4            1 [Si]  4747
+5          5            1 [Si]  2963
+```
+
+---
+# Estimación de asistencia actual por tramos de edad
+
+Estimo la proporción de personas que asisten actualmente a un centro educativo formal por tramo de edad según departamento.
+
+
+```r
+# usando age_groups
+tabla_asiste &lt;- get_estimation_mean(ech19,
+                                    variable = "school_enrollment",
+                                    by.x = "age_groups",
+                                    by.y = "dpto", 
+                                    level = "i") %&gt;% 
+  filter(school_enrollment == "Si")
+```
+
+---
+# Estimación de una proporción o media
+
+
+```r
+get_estimation_mean(
+  data = ech::toy_ech_2018, # data.frame
+  variable = NULL,          # variable a estimar
+  by.x = NULL,              # variable de cruce
+  by.y = NULL,              # variable de cruce
+  domain = NULL,            # dominio o subpoblacion
+  level = NULL,             # nivel hogares o personas
+  ids = NULL,               # upms
+  numero = "numero",        # identificador hogar
+  estrato = NULL,           # estrato
+  pesoano = "pesoano",      # ponderador
+  name = "estimacion"       # etiqueta
+)
+```
+
+
+---
+# Estimación de asistencia actual para una subpoblación
+
+Estimo la proporción de personas entre 12 y 17 años que asisten actualmente a un centro educativo formal según departamento.
+
+
+```r
+# usando age_groups
+get_estimation_mean(ech19,
+                    variable = "school_enrollment",
+                    by.x = "dpto",
+                    domain = "age_groups == 3", 
+                    level = "i") %&gt;% 
+  filter(school_enrollment == "Si")
+```
+
+```
+# A tibble: 19 x 5
+# Groups:   dpto [19]
+   dpto           school_enrollment estimacion estimacion_low estimacion_upp
+   &lt;fct&gt;          &lt;fct&gt;                  &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;
+ 1 Montevideo     Si                     0.945          0.935          0.954
+ 2 Artigas        Si                     0.895          0.859          0.932
+ 3 Canelones      Si                     0.931          0.917          0.944
+ 4 Cerro Largo    Si                     0.926          0.895          0.957
+ 5 Colonia        Si                     0.940          0.914          0.966
+ 6 Durazno        Si                     0.939          0.906          0.972
+ 7 Flores         Si                     0.960          0.922          0.998
+ 8 Florida        Si                     0.869          0.815          0.923
+ 9 Lavalleja      Si                     0.933          0.894          0.972
+10 Maldonado      Si                     0.941          0.920          0.963
+11 Paysandú       Si                     0.945          0.924          0.967
+12 Río Negro      Si                     0.965          0.935          0.995
+13 Rivera         Si                     0.919          0.886          0.951
+14 Rocha          Si                     0.925          0.895          0.955
+15 Salto          Si                     0.868          0.834          0.901
+16 San José       Si                     0.936          0.912          0.961
+17 Soriano        Si                     0.899          0.861          0.937
+18 Tacuarembó     Si                     0.896          0.859          0.933
+19 Treinta y Tres Si                     0.926          0.882          0.970
+```
+
+---
+# Estimación de asistencia actual para una subpoblación
+
+Estimo la proporción de personas entre 12 y 17 años que asisten actualmente a un centro educativo formal según departamento.
+
+
+```r
+# usando edad
+get_estimation_mean(ech19,
+                    variable = "school_enrollment",
+                    by.x = "dpto",
+                    domain = "e27 &gt; 11 &amp; e27 &lt; 18", 
+                    level = "i") %&gt;% 
+  filter(school_enrollment == "Si")
+```
+
+```
+# A tibble: 19 x 5
+# Groups:   dpto [19]
+   dpto           school_enrollment estimacion estimacion_low estimacion_upp
+   &lt;fct&gt;          &lt;fct&gt;                  &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;
+ 1 Montevideo     Si                     0.945          0.935          0.954
+ 2 Artigas        Si                     0.895          0.859          0.932
+ 3 Canelones      Si                     0.931          0.917          0.944
+ 4 Cerro Largo    Si                     0.926          0.895          0.957
+ 5 Colonia        Si                     0.940          0.914          0.966
+ 6 Durazno        Si                     0.939          0.906          0.972
+ 7 Flores         Si                     0.960          0.922          0.998
+ 8 Florida        Si                     0.869          0.815          0.923
+ 9 Lavalleja      Si                     0.933          0.894          0.972
+10 Maldonado      Si                     0.941          0.920          0.963
+11 Paysandú       Si                     0.945          0.924          0.967
+12 Río Negro      Si                     0.965          0.935          0.995
+13 Rivera         Si                     0.919          0.886          0.951
+14 Rocha          Si                     0.925          0.895          0.955
+15 Salto          Si                     0.868          0.834          0.901
+16 San José       Si                     0.936          0.912          0.961
+17 Soriano        Si                     0.899          0.861          0.937
+18 Tacuarembó     Si                     0.896          0.859          0.933
+19 Treinta y Tres Si                     0.926          0.882          0.970
+```
+
+
+---
+# Ejercicio
+
+
+- Estimar los años de educación según sexo para personas mayores de 24 años. Comparar con [OTU](https://otu.opp.gub.uy/?q=listados/listados_datos_formato&amp;id=2696&amp;cant=0&amp;fecha=2019-01-01)
+
+- Estimar el máximo nivel educativo alcanzado para una subpoblación, personas mayores de 24 años. Comparar con [OTU](https://otu.opp.gub.uy/?q=listados/listados_datos_formato&amp;id=2693&amp;cant=0&amp;fecha=2019-01-01)
+
+- Calcular las variables de completitud de cada nivel de enseñanza. Para calcular la completitud en el nivel terciario definir la cantidad de años aprobados que consideramos completan el nivel igual a 2, luego repetir para n=4.
+
+- Estimar la completitud en primaria y ciclo báscio para personas mayores de 15 años; la completitud en bachillerato para las personas mayores de 17 años y la completitud en el nivel terciario para las personas mayores de 24 años.
+
+- Comparar resultados con los publicados por [OTU](https://otu.opp.gub.uy/)
+
+---
+# Nivel de educación completado 
+
+Descripción | Variable | 
+---------------------------------------------|-----------|
+e197 | asiste a primaria
+e197_1 | primaria completa
+e201 | asiste a secundaria
+e51_4 | años aprobados en ciclo básico
+e51_5 | años aprobados en bachillerato 
+e51_6 | años aprobados en bachillerato técnico
+e51_7 | años aprobados en educación técnico 
+e51_7_1 | requisitos para educación técnica 
+e51_8 | años aprobados en magisterio/profesorado
+e51_9 | años aprobados en universidad o similar
+e51_10 | años aprobados en terciaria (no universitaria)
+e212 | asiste a educación técnica (no universitaria)
+e215 | asiste a magisterio
+e218 | asiste a universidad
+e221 | asiste a terciaria
+
+---
+# Nivel completado
+
+Defino terciaria completa si completó al menos 4 años 
+
+```r
+ech19 &lt;- ech19 %&gt;% 
+  mutate(primaria_completa = ifelse(e197 == 2 &amp; e197_1 == 1, 1, 0),
+         baja_secundaria_completa = ifelse(e201 %in% 1:2 &amp; e51_4 == 3, 1, 0),
+         alta_secundaria_completa = ifelse(e201 %in% 1:2 &amp; (e51_5 == 3 | e51_6 == 3), 1, 0),
+         terciaria_completa = ifelse((e212 %in% 1:2 &amp; e51_7_1 == 1 &amp; e51_7 &gt;= 3) | (e215 %in% 1:2 &amp; e51_8 &gt;= 3) | (e218 %in% 1:2 &amp; e51_9 &gt;= 3) | (e221 %in% 1:2 &amp; e51_10 &gt;= 3), 1, 0)
+```
+
+---
+# Ejercicio
+
+ - Estima la proporción de jóvenes que estudian o trabajan según sexo. Categorías:  "Estudia o trabaja","Busca trabajo","Realiza quehaceres del hogar","Ninguna de las anteriores"
+
+ 
+ - Observa cómo cambia esta estimación si en trabajo se incluyen a quienes realizan los quehaceres del hogar y a quienes buscan trabajo:
+ 
+ - Calcula la variable clima educativo del hogar como el promedio de años de educación de las personas mayores de edad.
+---
+
+&lt;!-- --- --&gt;
+&lt;!-- # Clima Educativo del Hogar --&gt;
+
+&lt;!-- ```{r eval =FALSE} --&gt;
+&lt;!-- dp %&lt;&gt;% mutate(mayor = if_else(e27 &gt; 17, 1, 0)) --&gt;
+
+&lt;!-- dp %&gt;% group_by(mayor) %&gt;%  --&gt;
+&lt;!--         summarise(promedio_anios_edu = survey_mean(anios_edu)) --&gt;
+
+
+&lt;!-- #A?OS DE EDUCACI?N DEL JEFE --&gt;
+&lt;!-- p2010$aniosedjefe=ifelse(p2010$E30==1,p2010$aniosed,0) --&gt;
+&lt;!-- #reviso algunos casos --&gt;
+&lt;!-- #p2010[1:25,c(1,5,14,73:76)] --&gt;
+&lt;!-- #asigno a todos los int del hogar los a?os ed del jefe --&gt;
+&lt;!-- edjefeh=tapply(p2010$aniosedjefe,p2010$NUMERO,max) --&gt;
+&lt;!-- edjefeh=as.matrix(edjefeh) --&gt;
+&lt;!-- p2010=merge(p2010,edjefeh,by.x="NUMERO",by.y="row.names") --&gt;
+&lt;!-- names(p2010)=c(names(p2010)[1:85],"edjefe") --&gt;
+
+&lt;!-- #cambio el clima educativo del hogar al clima educativo del jefe si no hay individuos mayores de 18 en el hogar --&gt;
+&lt;!-- mayor.edadh=tapply(p2010$E27,p2010$NUMERO,max) --&gt;
+&lt;!-- menores=ifelse(mayor.edadh &lt; 18, 1, 0) --&gt;
+&lt;!-- menores=as.matrix(menores) --&gt;
+&lt;!-- p2010=merge(p2010,menores,by.x="NUMERO",by.y="row.names") --&gt;
+&lt;!-- names(p2010)=c(names(p2010)[1:86],"menores") --&gt;
+&lt;!-- #p2010[1:20,c(1,5,14,70:77)] --&gt;
+
+&lt;!-- #CLIMA EDUCATIVO DEL HOGAR --&gt;
+&lt;!-- #----------asigna el valor de a?os educ promedio de los mayores de 18 a todos los miembros del hogar o los a?os educ del jefe si no hay mayores. --&gt;
+
+&lt;!-- p2010$climaedu=ifelse(p2010$menores==1,p2010$edjefe,p2010$aniosedh) --&gt;
+
+&lt;!-- #check=p2010[c(1:40, which(p2010$menores==1)),c(1,5,14,70:78)] --&gt;
+&lt;!-- #write.table(check, "check") --&gt;
+&lt;!-- #descriptivo expandido --&gt;
+&lt;!-- sum(p2010$climaedu*p2010$PESOANO)/sum(p2010$PESOANO) --&gt;
+&lt;!-- pp=p2010[p2010$E30==1,] --&gt;
+&lt;!-- pp2=p2010[p2010$E30==1&amp;p2010$E27%in%0:17,] --&gt;
+&lt;!-- sum(pp$climaedu*pp$PESOANO)/sum(pp$PESOANO) --&gt;
+&lt;!-- # --&gt;
+&lt;!-- exp=svydesign(id=~1, strata=p2010$ESTRATOGEO, data=p2010, weights=p2010$PESOANO) --&gt;
+&lt;!-- svymean(~climaedu, exp) --&gt;
+&lt;!-- exph=svydesign(id=~1, strata=pp$ESTRATOGEO, data=pp, weights=pp$PESOANO) --&gt;
+&lt;!-- svymean(~climaedu, exph) --&gt;
+&lt;!-- ``` --&gt;
+
+&lt;!-- #J?venes entre 14 y 29 que no asisten a centro educativo ni est?n ocupados --&gt;
+&lt;!-- ech$jovenes_nini &lt;- ifelse((ech$e27&gt;13 &amp; ech$e27&lt;30) &amp; ech$pobpcoac!=2 &amp; ech$asistencia_actual == 0,1,0) --&gt;
+
+&lt;!-- dise?o = svydesign(id=~numero, strata=~estred13, data=ech, weights=~pesoano) --&gt;
+&lt;!-- dedo&lt;-subset(dise?o,e27&gt;13 &amp; e27&lt;29) --&gt;
+
+&lt;!-- nini&lt;-svyby(~jovenes_nini,~dpto,design=dedo,svymean)*100 --&gt;
+&lt;!-- nini_t=svytable(~jovenes_nini,dedo, Ntotal=100)[2] --&gt;
+
+
+&lt;!-- --- --&gt;
+&lt;!-- # Nivel educativo alcanzado --&gt;
+
+&lt;!-- ```{r eval=FALSE} --&gt;
+&lt;!-- #Indicador 20 ---- --&gt;
+
+&lt;!-- ech$niveledu="" --&gt;
+&lt;!-- #Sin instrucci?n --&gt;
+&lt;!-- #Se toman casos que nunca asistieron a un centro de ense?anza (e49==2) y que no tienen a?os aprobados en ning?n nivel educativo (e51_x==0) --&gt;
+&lt;!-- ech$niveledu=ifelse(ech$e49==2 &amp; ech$e51_2==0 &amp; ech$e51_3==0 &amp; ech$e51_4==0 &amp; ech$e51_5==0 &amp; ech$e51_6==0 &amp; ech$e51_7==0 &amp; ech$e51_8==0 &amp; ech$e51_9==0 &amp; ech$e51_10==0 &amp; ech$e51_11==0 ,0,ech$niveledu) --&gt;
+&lt;!-- #Casos que para que est?n cursando primer a?o de primaria (e51_2==9 o e51_3==9) o est?n cursando pre-escolar (e193==1) --&gt;
+&lt;!-- ech$niveledu=ifelse(ech$e51_2==9 | ech$e51_3==9 | ech$e193==1, 0,ech$niveledu) --&gt;
+&lt;!-- #Casos que no aprobaron ning?n a?o de primaria --&gt;
+&lt;!-- ech$niveledu=ifelse(ech$e51_2==0 &amp; ech$e51_3==0, 0,ech$niveledu) --&gt;
+
+&lt;!-- #Primaria --&gt;
+&lt;!-- #Casos que aprobaron alg?n a?o de primaria com?n (0&lt;e51_2&lt;=6) o primaria especial (e51_3) pero ninguno de secundaria (e51_4==0), o est?n cursando primer a?o de secundaria (e51_4==9) --&gt;
+&lt;!-- ech$niveledu=ifelse((ech$e51_2&gt;0 &amp; ech$e51_2&lt;=6) &amp; (ech$e51_4==0 | ech$e51_4==9), 1,ech$niveledu) --&gt;
+&lt;!-- ech$niveledu=ifelse((ech$e51_3&gt;0 &amp; ech$e51_3&lt;=6) &amp; (ech$e51_4==0 | ech$e51_4==9), 1,ech$niveledu) --&gt;
+&lt;!-- #Casos que aprobaron alg?n a?o de educaci?n t?cnica que no requiere ense?anza anterior  --&gt;
+&lt;!-- ech$niveledu=ifelse((ech$e51_7&gt;0 &amp; ech$e51_7_1==4) &amp; (ech$e51_4==0 | ech$e51_4==9), 1,ech$niveledu) --&gt;
+
+&lt;!-- #Secundaria --&gt;
+&lt;!-- #Aprobaron alg?n a?o de ciclo b?sico (e51_4), bachillerato (e51_5) o bachillerato tecnol?gico (e51_6) pero no tienen educaci?n terciaria (e51_8, e51_9, e51_10, e51_11) --&gt;
+&lt;!-- ech$niveledu=ifelse(((ech$e51_4&gt;0 &amp; ech$e51_4&lt;=3) | (ech$e51_5&gt;0 &amp; ech$e51_5&lt;=3) | (ech$e51_6&gt;0 &amp; ech$e51_4&lt;=6)) &amp; (ech$e51_8==0 &amp; ech$e51_9==0 &amp; ech$e51_10==0 &amp; ech$e51_11==0), 2,ech$niveledu) --&gt;
+&lt;!-- #Aprobaron secundaria y est?n cursando primer a?o de magisterio o profesorado (e51_8==9) --&gt;
+&lt;!-- ech$niveledu=ifelse(((ech$e51_4==3 &amp; ech$e51_8==9) | (ech$e51_5==3 &amp; ech$e51_8==9) | (ech$e51_6==3 &amp; ech$e51_8==9)), 2,ech$niveledu) --&gt;
+&lt;!-- #Aprobaron alg?n a?o de educaci?n t?cnica (e51_7) que requer?a primaria completa (e51_7_1==3) --&gt;
+&lt;!-- ech$niveledu=ifelse((ech$e51_7 != 0 &amp; ech$e51_7_1==3), 2,ech$niveledu) --&gt;
+
+&lt;!-- #UTU --&gt;
+&lt;!-- #Aprobaron alg?n a?o de educaci?n t?cnica (e51_7) que requer?a secundaria o ciclo b?sico completo (ech$e51_7_1&lt;3) o primaria completa (e51_7_1==3), no tienen educaci?n terciaria (e51_8, e51_9, e51_10) --&gt;
+&lt;!-- ech$niveledu=ifelse((((ech$e51_7&gt;0 &amp; ech$e51_7&lt;=9 &amp; ech$e51_7_1&lt;3) | (ech$e51_7!= 0 &amp; ech$e51_7_1==3 &amp; ech$e51_4==0 &amp; ech$e51_5==0 &amp; ech$e51_6==0)) &amp; (ech$e51_8==0 &amp; ech$e51_9==0 &amp; ech$e51_10==0)), 3,ech$niveledu) --&gt;
+
+&lt;!-- #MAGISTERIO O PROFESORADO --&gt;
+&lt;!-- #Aprobaron alg?n a?o de magisterio o profesorado (e51_8) pero no universidad o similar, terciario no universitario ni posgrado --&gt;
+&lt;!-- ech$niveledu=ifelse((ech$e51_8&gt;0 &amp; ech$e51_8&lt;=5) &amp; (ech$e51_9==0 &amp; ech$e51_10==0 &amp; ech$e51_11==0), 4,ech$niveledu) --&gt;
+
+&lt;!-- #UNIVERSIDAD --&gt;
+&lt;!-- #Aprobaron alg?n a?o de universidad o similar (e51_9), terciario no universitario (e51_10) o posgrado (e51_11) --&gt;
+&lt;!-- ech$niveledu=ifelse((ech$e51_9&gt;0 &amp; ech$e51_9&lt;=9) | (ech$e51_10&gt;0 &amp; ech$e51_10&lt;=9) | (ech$e51_11&gt;0 &amp; ech$e51_11&lt;=9), 5,ech$niveledu) --&gt;
+
+&lt;!-- # Vector para a?o del reporte --&gt;
+
+&lt;!-- niveledu &lt;- numeric(140) --&gt;
+
+&lt;!-- #Calculo proporciones por nivel educativo seg?n departamento y las asigno al vector niveledu --&gt;
+&lt;!-- for (depart in seq(1,19)) { --&gt;
+&lt;!--   niveledu_dpto &lt;- svytable(~subset(ech$niveledu,ech$dpto==depart&amp;ech$e27&gt;24),subset(dise?o,ech$dpto==depart&amp;ech$e27&gt;24),Ntotal=100) --&gt;
+&lt;!--   for (niveles in seq(1,6)) { --&gt;
+&lt;!--     niveledu[depart*7-7+niveles] &lt;- niveledu_dpto[niveles]  --&gt;
+&lt;!--   } --&gt;
+&lt;!--   niveledu[depart*7] &lt;- sum(niveledu_dpto) --&gt;
+&lt;!-- } --&gt;
+&lt;!-- #Calculo proporciones por nivel educativo para total pa?s y las asigno al final del vector --&gt;
+&lt;!-- niveledu_tot&lt;-svytable(~subset(ech$niveledu,ech$e27&gt;24),subset(dise?o,ech$e27&gt;24), Ntotal=100) --&gt;
+&lt;!-- for (niveles in seq(1,6)) { --&gt;
+&lt;!--   niveledu[133+niveles] &lt;- niveledu_tot[niveles]  --&gt;
+&lt;!-- } --&gt;
+&lt;!-- niveledu[140] &lt;- sum(niveledu_tot) --&gt;
+
+&lt;!-- I20 &lt;- niveledu --&gt;
+
+&lt;!-- aux&lt;-read.csv("T:/Informes Departamentales/Insumos/CSVs/I20_Nivel_Edu.csv", sep=",", check.names = FALSE) --&gt;
+
+&lt;!-- anios&lt;-as.vector(names(aux)) --&gt;
+&lt;!-- d&lt;-as.numeric(bbbb)-as.numeric(anios[3])+3 --&gt;
+&lt;!-- aux[,d]&lt;-I20 --&gt;
+
+&lt;!-- names(aux)[d]&lt;-c(as.character(as.numeric(aaaa)-1)) --&gt;
+
+&lt;!-- write.table(aux, "T:/Informes Departamentales/Insumos/CSVs/I20_Nivel_Edu.csv", row.names=FALSE, sep=",") --&gt;
+
+&lt;!-- #Genero variables de finalizaci?n de primaria, Ciclo B?sico y Educaci?n Media Superior. --&gt;
+&lt;!-- #Asisti? a educaci?n primaria (e197==2), y finaliz? (e197_1==1) --&gt;
+&lt;!-- ech$primaria_fin &lt;- ifelse(ech$e197==2 &amp; ech$e197_1==1,1,0) --&gt;
+&lt;!-- #Asiste o asisti? a educaci?n media (e201==1|e201==2), y complet? 3 a?os de Ciclo B?sico (e51_4==3) --&gt;
+&lt;!-- ech$CB_fin &lt;- ifelse((ech$e201==1 | ech$e201==2) &amp; ech$e51_4==3,1,0) --&gt;
+&lt;!-- #Asiste o asisti? a educaci?n media, y complet? 3 a?os de Bachillerato (e51_5==3) --&gt;
+&lt;!-- ech$EMS_fin &lt;- ifelse((ech$e201==1 | ech$e201==2) &amp; (ech$e51_5==3| ech$e51_6==3),1,0) --&gt;
+&lt;!-- ech$primaria=ifelse(ech$e27&gt;13 &amp; ech$e27&lt;16,1,0) --&gt;
+&lt;!-- dise?o = svydesign(id=~numero, strata=~estred13, data=ech, weights=~pesoano) --&gt;
+
+&lt;!-- dedo&lt;-subset(dise?o,e27&gt;13 &amp; e27&lt;16) --&gt;
+&lt;!-- dedo2&lt;-subset(dise?o,e27&gt;16 &amp; ech$e27&lt;19) --&gt;
+&lt;!-- dedo3&lt;-subset(dise?o,ech$e27&gt;20 &amp; ech$e27&lt;23) --&gt;
+
+&lt;!-- primaria&lt;-svyby(~primaria_fin,~dpto,design=dedo,svymean)*100 --&gt;
+&lt;!-- cb&lt;-svyby(~CB_fin,~dpto,design=dedo2,svymean)*100 --&gt;
+&lt;!-- ems&lt;-svyby(~EMS_fin,~dpto,design=dedo3,svymean)*100 --&gt;
+
+&lt;!-- primaria_t=svytable(~primaria_fin,dedo, Ntotal=100)[2] --&gt;
+&lt;!-- cb_t=svytable(~CB_fin,dedo2, Ntotal=100)[2] --&gt;
+&lt;!-- ems_t=svytable(~EMS_fin,dedo3, Ntotal=100)[2] --&gt;
+
+
+&lt;!-- I22 &lt;- c(primaria[,2],primaria_t,cb[,2],cb_t,ems[,2],ems_t) --&gt;
+
+&lt;!-- aux&lt;-read.csv("T:/Informes Departamentales/Insumos/CSVs/I22.csv", sep=";", check.names = FALSE) --&gt;
+
+&lt;!-- anios&lt;-as.vector(names(aux)) --&gt;
+&lt;!-- d&lt;-as.numeric(bbbb)-as.numeric(anios[3])+3 --&gt;
+&lt;!-- aux[,d]&lt;-I22 --&gt;
+
+&lt;!-- names(aux)[d]&lt;-c(as.character(as.numeric(aaaa)-1)) --&gt;
+
+&lt;!-- # aux$`2018`=round(aux$`2018`,1) ##esto se corre una vez, cuando no est? el ultimo dato a?n. --&gt;
+&lt;!-- # aux$`2018`= sub(".", ",", aux$`2018`, fixed = TRUE) ##esto se corre una vez, cuando no est? el ultimo dato a?n. --&gt;
+
+
+&lt;!-- write.table(aux, "T:/Informes Departamentales/Insumos/CSVs/I22_Culmina_ciclos.csv", row.names=FALSE, sep=",") --&gt;
+
+&lt;!-- ``` --&gt;
+
+
+&lt;!-- --- --&gt;
+&lt;!-- # Gráfico: estimaciones y márgenes de error --&gt;
+
+&lt;!-- ```{r eval = FALSE} --&gt;
+&lt;!-- library(ggplot2) --&gt;
+
+&lt;!-- tabla %&gt;% --&gt;
+&lt;!-- # gráfico --&gt;
+&lt;!-- ggplot(aes(x = e26, y = estimacion, group = e26, --&gt;
+&lt;!--            ymax = estimacion_upp, ymin = estimacion_low)) + --&gt;
+&lt;!--   # barras --&gt;
+&lt;!--   geom_bar(stat = "identity", position = "dodge", fill = 'purple', alpha = 0.5) + --&gt;
+&lt;!--   # error --&gt;
+&lt;!--   geom_errorbar(position = position_dodge(width = 0.9), width = 0.1) + --&gt;
+&lt;!--   labs(x = 'Departamento', y = 'Tasa de actividad', --&gt;
+&lt;!--        title = 'Tasa de actividad según sexo', --&gt;
+&lt;!--        caption = 'Fuente: ECH 2019') + --&gt;
+&lt;!--        theme_minimal() + theme(axis.text.x = element_text(angle = 60, hjust = 1)) --&gt;
+&lt;!-- ``` --&gt;
+&lt;!-- --- --&gt;
+&lt;!-- class: center --&gt;
+&lt;!-- #  --&gt;
+&lt;!-- ```{r eval = FALSE, echo = FALSE, warning=FALSE} --&gt;
+&lt;!-- library(ggplot2) --&gt;
+
+&lt;!-- diseno_ech_srvyr %&gt;% --&gt;
+&lt;!--        group_by(nomdpto) %&gt;% --&gt;
+&lt;!--        summarize(pobre_dpto = survey_mean(pobre, vartype = "ci", deff = TRUE)) %&gt;%  --&gt;
+
+&lt;!-- ggplot(aes(x = nomdpto, y = pobre_dpto, group = nomdpto, --&gt;
+&lt;!--            ymax = pobre_dpto_upp, ymin = pobre_dpto_low)) + --&gt;
+&lt;!--   geom_bar(stat = "identity", position = "dodge", fill = 'purple', alpha = 0.5) + --&gt;
+&lt;!--   geom_errorbar(position = position_dodge(width = 0.9), width = 0.1) + --&gt;
+&lt;!--   labs(x = 'Departamento', y = 'Proporción hogares pobres',  --&gt;
+&lt;!--        title = 'Proporción de hogares pobres según departamento', --&gt;
+&lt;!--        caption = 'Fuente: ECH 2018') + --&gt;
+&lt;!--        theme(axis.text.x = element_text(angle = 60, hjust = 1)) --&gt;
+&lt;!-- ``` --&gt;
+
+
+
+&lt;!-- # Intervalo de confianza --&gt;
+
+&lt;!-- - La interpretación de un intervalo de confianza no refiere a un intervalo particular sino a todos los posibles intervalos que se pueden construir para cierto nivel de confianza y tamaño de muestra. --&gt;
+
+&lt;!-- - Una correcta interpretación de un intervalo de confianza al 5% para la media poblacional μ serı́a decir: que si se eligieran muchas muestras, se puede esperar que el 95% de los intervalos aleatorios generados por esas respectivas muestras contengan a la media poblacional. --&gt;
+
+&lt;!-- - confint(object, parm, level = 0.95) --&gt;
+
+&lt;!-- - parm: especificación del parámetro --&gt;
+
+&lt;!-- - level: el nivel de confianza. Por defecto es 95% --&gt;
+
+&lt;!-- - Se obtiene una matriz o vector cuyas columnas indican el extremo izquierdo y derecho del intervalo de confianza para la estimación puntual --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Error de muestreo --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Coeficiente de variación --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Factor de corrección de poblaciones finitas  --&gt;
+
+&lt;!-- - Incorporamos información: estrato y tamaño del estrato en la población --&gt;
+
+&lt;!-- - Ası́ calculamos el f pc = 1 − n h /N h --&gt;
+
+&lt;!-- - fpc: factor de corrección de poblaciones finitas, para corregir la --&gt;
+&lt;!-- varianza del estimador --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Visualización --&gt;
+
+&lt;!-- https://socviz.co/modeling.html#plots-from-complex-surveys --&gt;
+
+&lt;!-- el diseño muestral aproximado, corresponde a un diseño estratificado porconglomerados en una etapa, en donde los estratos son idénticos a los del diseño muestral de laECH y lasPSUsson los hogares y los ponderadores muestrales son los que provee la encuesta(pesomen, pesotri y pesoano según el período de referencia) --&gt;
+
+&lt;!-- DEFF   =efecto de diseño definido como el cociente de la varianza obtenida en la estimación con el  diseño utilizado, entre la varianza obtenida considerando un muestreo aleatorio simple con un mismo tamaño de muestra.  --&gt;
+
+&lt;!-- La precisión de las estimaciones depende: --&gt;
+&lt;!--  La estrategia de selección (diseño muestral) --&gt;
+&lt;!--  Método utilizado para el cálculo --&gt;
+&lt;!-- ponderadores (e.g. calibración). --&gt;
+&lt;!-- de --&gt;
+&lt;!-- los --&gt;
+&lt;!-- Generalmente estamos interesados en calcular el error --&gt;
+&lt;!-- estándar del estimador (SE = √Var) --&gt;
+&lt;!-- Las formulas utilizada para el cálculo de los SE depende --&gt;
+&lt;!-- del diseño y el método de ponderación --&gt;
+
+&lt;!-- calcular las estimaciones de los --&gt;
+&lt;!-- distintos indicadores de una encuesta por muestreo: --&gt;
+
+&lt;!-- Totales --&gt;
+&lt;!-- Promedios y proporciones --&gt;
+&lt;!-- Ratios --&gt;
+&lt;!-- Percentiles --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- # Muestra vs. Población --&gt;
+&lt;!-- ```{r echo=FALSE} --&gt;
+&lt;!-- library(ech) --&gt;
+&lt;!-- ``` --&gt;
+
+&lt;!-- Conjunto | Hogares  | Personas --&gt;
+&lt;!-- -------- | ---------- |------------ --&gt;
+&lt;!-- Muestra |107.871 | 107.871 --&gt;
+&lt;!-- Población | 3.517.931|3.517.931  --&gt;
+
+&lt;!-- - Una correcta especificación del diseño de muestreo nos permitirá extrapolar los resultados a toda la población, es decir, hacer estimaciones puntuales y por intervalo. --&gt;
+&lt;!-- &lt;br&gt;&lt;br&gt; --&gt;
+&lt;!-- -- --&gt;
+
+&lt;!-- - Para obtener estimaciones de los diferentes indicadores de interés utilizo el paquete 'survey' o 'svryr'.  --&gt;
+&lt;!-- &lt;br&gt;&lt;br&gt; --&gt;
+&lt;!-- -- --&gt;
+
+&lt;!-- - Podría calcularlas 'a mano' pero sería más trabajoso, sobre todo calcular las varianzas de los estimadores para así obtener los intervalos de confianza. --&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"slideNumberFormat": "<div class=\"progress-bar-container\">   <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">   </div> </div>"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
