@@ -171,7 +171,7 @@ Preguntas de la encuesta que relevan asistencia a un centro de estudio
 
 Descripción | Variable | Códigos 
 --------|:--------------:|----------------
-Asiste a un centro educativo | 193 | 1 Asiste; 2 Asistió; 3 Nunca asistió
+Asiste a preescolar | 193 | 1 Asiste; 2 Asistió; 3 Nunca asistió
 Asistencia a educación primaria |	e197	| 1	Asiste; 2	Sí, asistió; 3	No asistió
 Asistencia a educación media | e201	| 1	Asiste; 2	Sí, asistió; 3	No asistió
 Asistencia a educación técnica | e212 | 1	Asiste; 2	Sí, asistió; 3	No asistió
@@ -192,7 +192,7 @@ ech19 <- ech19 %>%
                   (e218 == 1 & e27 > 17) | (e221 == 1 & e27 > 17) | (e224 == 1 & e27 > 17)) ~ 1,
                    TRUE ~ 0),
           edad_tramos = cut(e27, c(0,4,11,17,29, max(e27)), include.lowest = TRUE,
-                           labels = c("0-4", "5-11", "12-17", "18-25", "30+")))
+                           labels = c("0-4", "5-11", "12-17", "18-29", "30+")))
 
 ech19 %>% group_by(edad_tramos, asistencia_actual) %>% 
           summarise(total = n())
